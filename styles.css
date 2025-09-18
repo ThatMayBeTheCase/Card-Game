@@ -1,11 +1,10 @@
-/* ===== Bas ===== */
 * { box-sizing: border-box; }
 :root {
-  --bg: #a7f3d0;     /* mjuk grön bakgrund */
-  --ink: #0f172a;    /* mörk text */
-  --card: #fff;      /* kortets färg */
-  --muted: #475569;  /* sekundär text */
-  --accent: #10b981; /* knappar */
+  --bg: #1a3449;
+  --ink: #f5f5f5;
+  --card: #17232d;
+  --muted: #c9d1d9;
+  --accent: #ff705a;
 }
 html, body {
   height: 100%;
@@ -15,16 +14,17 @@ html, body {
   background: var(--bg);
 }
 
-/* ===== Layout ===== */
+/* Hela spelet */
 .game {
   max-width: 900px;
   margin: 0 auto;
   padding: 28px 20px 40px;
   display: grid;
+  justify-content: center;
   gap: 24px;
 }
 
-/* ===== HUD (poäng / liv / kort kvar) ===== */
+/* HUD - poäng/liv/kort kvar */
 .hud {
   display: flex;
   gap: 18px;
@@ -34,12 +34,12 @@ html, body {
 }
 .hud span { font-variant-numeric: tabular-nums; }
 
-/* ===== Bord + kort ===== */
+/* Bord med kort */
 .table {
   display: grid;
   justify-items: center;
   gap: 12px;
-  min-height: 260px; /* ger lite luft innan du har kortet */
+  min-height: 260px;
 }
 
 .card {
@@ -47,14 +47,17 @@ html, body {
   height: 320px;
   background: var(--card);
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
   display: grid;
   place-items: center;
-  font-size: 64px;     /* visa t.ex. ♥️ stort i mitten */
+  font-size: 64px;
   position: relative;
   user-select: none;
 }
-
+.card .pip {
+  font-size: 200px;
+  line-height: 1;
+}
 /* små rankmarkeringar uppe/vänster och nere/höger om du vill lägga in dem i JS */
 .card .rank.tl, .card .rank.br {
   position: absolute;
@@ -64,8 +67,8 @@ html, body {
 .card .rank.tl { top: 10px; left: 12px; }
 .card .rank.br { bottom: 10px; right: 12px; }
 
-.red { color: #ef4444; }   /* röd för ♥ ♦ */
-.black { color: #111827; } /* svart för ♣ ♠ */
+.red { color: var(--accent); }   /* röd för ♥ ♦ */
+.black { color: var(--ink); } /* svart för ♣ ♠ */
 
 .message {
   min-height: 24px;
@@ -73,7 +76,7 @@ html, body {
   font-weight: 600;
 }
 
-/* ===== Knappar ===== */
+/* Knappar */
 .controls {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -83,10 +86,11 @@ html, body {
 .restart button {
   padding: 12px 14px;
   border: none;
-  border-radius: 999px;
+  border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
-  background: white;
+  color: var(--ink);
+  background: var(--accent);
   box-shadow: 0 4px 12px rgba(0,0,0,.08);
   transition: transform .06s ease, box-shadow .15s ease, opacity .2s ease;
 }
@@ -94,6 +98,7 @@ html, body {
 .restart button:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  background-color: #b95647;
 }
 .controls button:active,
 .restart button:active {

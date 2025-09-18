@@ -1,23 +1,17 @@
-// ===============================
-// Högre / Lägre / Lika
-// app.js
-// ===============================
 
-// ===== Globala variabler =====
-let deck = [];        // själva kortleken
+// Globala variabler
+let deck = [];
 let currentCard = null; 
 let score = 0;
 let lives = 3;
 
-// ======== Hjälpfunktioner ========
-
-// Bygg en kortlek med 52 kort (2–14, 11=J, 12=Q, 13=K, 14=A)
+// skapar en kortlek med 52 kort
 function buildDeck() {
   let suits = ["♥", "♦", "♣", "♠"];
   let deck = [];
   for (const suit of suits) {
     for (let rank = 2; rank <=14; rank++) {
-        deck.push({ rank, suit }); // 11=J, 12=Q, 13=K, 14=A
+        deck.push({ rank, suit });
     }
   }
   return deck;
@@ -30,13 +24,23 @@ function rankLabel(rank) {
   return String(rank); // 2–10 visas som sina siffror
 }
 
+function renderCardHTML(card) {
+  const label = rankLabel(card.rank);
+  const suit = card.suit;
+  return `
+    <span class="rank tl">${label}${suit}</span>
+    <span class="pip">${suit}</span>
+    <span class="rank br">${label}${suit}</span>
+  `;
+}
+
+
 // Blanda kortleken (Fisher–Yates shuffle)
 function shuffleDeck(deck) {
     for (let i = deck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [deck[i], deck[j]] = [deck[j], deck[i]];
     }
-  return deck;
 }
 
 // Dra ett kort från toppen av leken
@@ -57,7 +61,7 @@ function compareRanks(a, b) {
 // Starta spelet
 function startGame() {
   deck = buildDeck();
-  deck = shuffleDeck(deck);
+  shuffleDeck(deck);
   score = 0;
   lives = 3;
   currentCard = drawCard();
@@ -77,11 +81,11 @@ function handleGuess(choice) {
 //kolla gisningen
   if (choice === result) {
     score++;
-    updateUI("Rätt Gissat!");
+    updateUI("Rätt!");
   }
   else {
     lives--;
-    updateUI("Fel Gissat!");
+    updateUI("Fel!");
   }
 
 //Flytta fram nästa kort i kön
@@ -106,33 +110,31 @@ function updateUI(message = "") {
   document.getElementById("lives").textContent = lives;
   // remaining
   document.getElementById("remaining").textContent = deck.length;
+
   // current card
   const cardDiv = document.getElementById("card");
-  if (currentCard) {
-    cardDiv.textContent = `${rankLabel(currentCard.rank)}${currentCard.suit}`;
-    const isRed = currentCard.suit === "♥" || currentCard.suit === "♦";
-    cardDiv.classList.add(isRed ? "red" : "black");
+cardDiv.classList.remove("red", "black");
 
-    // TODO: byt färg beroende på suit (♥ ♦ röd, ♣ ♠ svart)
-  } else {
-    cardDiv.textContent = "";
-  }
-  // message
+if (currentCard) {
+  const isRed = currentCard.suit === "♥" || currentCard.suit === "♦";
+  cardDiv.classList.add(isRed ? "red" : "black");
+
+  cardDiv.innerHTML = renderCardHTML(currentCard);
+} 
+else {
+  cardDiv.textContent = "";
+}
   document.getElementById("message").textContent = message;
 }
 
 // Avsluta spelet
 function endGame(reason) {
-  updateUI(reason + " – Slutpoäng: " + score);
+  updateUI(reason + " - Slutpoäng: " + score);
   // göm knapparna
   document.querySelectorAll(".controls button").forEach(btn => btn.disabled = true);
   // visa restart-knappen
   document.getElementById("btn-restart").hidden = false;
-
-  startGame();
 }
-
-// ======== Event Listeners ========
 
 // Knappar för gissningar
 document.querySelectorAll(".controls button").forEach(btn => {
