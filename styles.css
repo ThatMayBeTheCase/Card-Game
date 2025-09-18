@@ -1,89 +1,112 @@
-DATATYP Card:
-    rank  // 2..10, 11=J, 12=Q, 13=K, 14=Ace
-    suit  // "♥", "♦", "♣", "♠"
+/* ===== Bas ===== */
+* { box-sizing: border-box; }
+:root {
+  --bg: #a7f3d0;     /* mjuk grön bakgrund */
+  --ink: #0f172a;    /* mörk text */
+  --card: #fff;      /* kortets färg */
+  --muted: #475569;  /* sekundär text */
+  --accent: #10b981; /* knappar */
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
 
-VARIABLER:
-    deck : lista<Card>
-    currentCard : Card | null
-    nextCard : Card | null
-    score : heltal = 0
-    lives : heltal = 3   // antal fel som tillåts
-    remaining : heltal   // kort kvar i leken
+/* ===== Layout ===== */
+.game {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+  display: grid;
+  gap: 24px;
+}
 
-FUNKTION buildDeck() -> lista<Card>
-    deck = tom lista
-    FOR varje suit i ["♥","♦","♣","♠"]:
-        FOR rank i [2..14]:
-            deck.läggTill( Card(rank, suit) )
-    RETURN deck
+/* ===== HUD (poäng / liv / kort kvar) ===== */
+.hud {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+.hud span { font-variant-numeric: tabular-nums; }
 
-FUNKTION shuffleDeck(deck)
-    // Fisher–Yates
-    FOR i från deck.längd-1 NER TILL 1:
-        j = slumpTal(0..i)
-        byt deck[i] med deck[j]
+/* ===== Bord + kort ===== */
+.table {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  min-height: 260px; /* ger lite luft innan du har kortet */
+}
 
-FUNKTION drawCard() -> Card | null
-    OM deck är tom:
-        RETURN null
-    ELSE:
-        RETURN deck.taSista()  // eller taFörsta()
+.card {
+  width: 220px;
+  height: 320px;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.1);
+  display: grid;
+  place-items: center;
+  font-size: 64px;     /* visa t.ex. ♥️ stort i mitten */
+  position: relative;
+  user-select: none;
+}
 
-FUNKTION compareRanks(a:Card, b:Card) -> sträng
-    OM a.rank < b.rank: RETURN "higher"     // nästa är högre
-    OM a.rank > b.rank: RETURN "lower"      // nästa är lägre
-    ELSE:           RETURN "equal"          // lika rang (färg ignoreras)
+/* små rankmarkeringar uppe/vänster och nere/höger om du vill lägga in dem i JS */
+.card .rank.tl, .card .rank.br {
+  position: absolute;
+  font-size: 20px;
+  line-height: 1;
+}
+.card .rank.tl { top: 10px; left: 12px; }
+.card .rank.br { bottom: 10px; right: 12px; }
 
-FUNKTION startGame()
-    deck = buildDeck()
-    shuffleDeck(deck)
-    score = 0
-    lives = 3
-    currentCard = drawCard()
-    remaining = deck.längd
-    nextCard = null
-    uppdateraUI()
+.red { color: #ef4444; }   /* röd för ♥ ♦ */
+.black { color: #111827; } /* svart för ♣ ♠ */
 
-FUNKTION handleGuess(userChoice: "higher" | "lower" | "equal")
-    OM lives == 0 ELLER remaining == 0:
-        RETURN  // spelet redan slut
+.message {
+  min-height: 24px;
+  color: var(--muted);
+  font-weight: 600;
+}
 
-    // Dra nästa kort
-    nextCard = drawCard()
-    remaining = deck.längd
+/* ===== Knappar ===== */
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.controls button,
+.restart button {
+  padding: 12px 14px;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  transition: transform .06s ease, box-shadow .15s ease, opacity .2s ease;
+}
+.controls button:hover,
+.restart button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.12);
+}
+.controls button:active,
+.restart button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+.controls button[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
+}
 
-    // Jämför
-    resultat = compareRanks(currentCard, nextCard)
-
-    OM userChoice == resultat:
-        score = score + 1
-        visaMeddelande("Rätt gissat!")
-    ANNARS:
-        lives = lives - 1
-        visaMeddelande("Fel gissat!")
-
-    // Flytta fram
-    currentCard = nextCard
-    nextCard = null
-    uppdateraUI()
-
-    // Kolla slutvillkor
-    OM lives == 0:
-        endGame("Slut på försök")
-    ANNARS OM remaining == 0:
-        endGame("Kortleken är slut")
-
-FUNKTION endGame(anledning: sträng)
-    låsKnappar()   // inaktivera högre/lägre/lika
-    visaMeddelande(anledning + ". Slutpoäng: " + score)
-    visaKnapp("Spela igen", resetGame)
-
-FUNKTION resetGame()
-    startGame()
-
-FUNKTION uppdateraUI()
-    visaKort(currentCard)
-    visaPoäng(score)
-    visaFörsök(lives)
-    visaKortKvar(remaining)
-    aktiveraKnappar( ["lägre","lika","högre"] ) om lives>0 och remaining>0
+.restart {
+  display: grid;
+  justify-items: center;
+  margin-top: 6px;
+}
