@@ -28,9 +28,15 @@ function renderCardHTML(card) {
   const label = rankLabel(card.rank);
   const suit = card.suit;
   return `
-    <span class="rank tl">${label}${suit}</span>
+    <span class="rank tl">
+      <div>${label}</div>
+      <div>${suit}</div>
+    </span>
     <span class="pip">${suit}</span>
-    <span class="rank br">${label}${suit}</span>
+    <span class="rank br">
+      <div>${label}</div>
+      <div>${suit}</div>
+    </span>
   `;
 }
 

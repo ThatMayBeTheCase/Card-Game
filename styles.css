@@ -46,7 +46,8 @@ html, body {
   width: 220px;
   height: 320px;
   background: var(--card);
-  border-radius: 16px;
+  border-radius: 8px;
+  border: 1px solid #283d4e;
   box-shadow: 0 10px 30px rgba(0,0,0,.35);
   display: grid;
   place-items: center;
@@ -54,6 +55,7 @@ html, body {
   position: relative;
   user-select: none;
 }
+
 .card .pip {
   font-size: 200px;
   line-height: 1;
@@ -64,7 +66,7 @@ html, body {
   line-height: 1;
 }
 .card .rank.tl { top: 10px; left: 12px; }
-.card .rank.br { bottom: 10px; right: 12px; }
+.card .rank.br { bottom: 10px; right: 12px; transform: rotate(180deg); }
 
 .red { color: var(--accent); } /* röd för ♥ ♦ */
 .black { color: var(--ink); } /* svart för ♣ ♠ */
