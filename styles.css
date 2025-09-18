@@ -1,0 +1,89 @@
+DATATYP Card:
+    rank  // 2..10, 11=J, 12=Q, 13=K, 14=Ace
+    suit  // "♥", "♦", "♣", "♠"
+
+VARIABLER:
+    deck : lista<Card>
+    currentCard : Card | null
+    nextCard : Card | null
+    score : heltal = 0
+    lives : heltal = 3   // antal fel som tillåts
+    remaining : heltal   // kort kvar i leken
+
+FUNKTION buildDeck() -> lista<Card>
+    deck = tom lista
+    FOR varje suit i ["♥","♦","♣","♠"]:
+        FOR rank i [2..14]:
+            deck.läggTill( Card(rank, suit) )
+    RETURN deck
+
+FUNKTION shuffleDeck(deck)
+    // Fisher–Yates
+    FOR i från deck.längd-1 NER TILL 1:
+        j = slumpTal(0..i)
+        byt deck[i] med deck[j]
+
+FUNKTION drawCard() -> Card | null
+    OM deck är tom:
+        RETURN null
+    ELSE:
+        RETURN deck.taSista()  // eller taFörsta()
+
+FUNKTION compareRanks(a:Card, b:Card) -> sträng
+    OM a.rank < b.rank: RETURN "higher"     // nästa är högre
+    OM a.rank > b.rank: RETURN "lower"      // nästa är lägre
+    ELSE:           RETURN "equal"          // lika rang (färg ignoreras)
+
+FUNKTION startGame()
+    deck = buildDeck()
+    shuffleDeck(deck)
+    score = 0
+    lives = 3
+    currentCard = drawCard()
+    remaining = deck.längd
+    nextCard = null
+    uppdateraUI()
+
+FUNKTION handleGuess(userChoice: "higher" | "lower" | "equal")
+    OM lives == 0 ELLER remaining == 0:
+        RETURN  // spelet redan slut
+
+    // Dra nästa kort
+    nextCard = drawCard()
+    remaining = deck.längd
+
+    // Jämför
+    resultat = compareRanks(currentCard, nextCard)
+
+    OM userChoice == resultat:
+        score = score + 1
+        visaMeddelande("Rätt gissat!")
+    ANNARS:
+        lives = lives - 1
+        visaMeddelande("Fel gissat!")
+
+    // Flytta fram
+    currentCard = nextCard
+    nextCard = null
+    uppdateraUI()
+
+    // Kolla slutvillkor
+    OM lives == 0:
+        endGame("Slut på försök")
+    ANNARS OM remaining == 0:
+        endGame("Kortleken är slut")
+
+FUNKTION endGame(anledning: sträng)
+    låsKnappar()   // inaktivera högre/lägre/lika
+    visaMeddelande(anledning + ". Slutpoäng: " + score)
+    visaKnapp("Spela igen", resetGame)
+
+FUNKTION resetGame()
+    startGame()
+
+FUNKTION uppdateraUI()
+    visaKort(currentCard)
+    visaPoäng(score)
+    visaFörsök(lives)
+    visaKortKvar(remaining)
+    aktiveraKnappar( ["lägre","lika","högre"] ) om lives>0 och remaining>0

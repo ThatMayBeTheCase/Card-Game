@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <title>Document</title>
+</head>
+<body>
+    <main class="game">
+        <!-- HUD med info -->
+        <section class="hud">
+            <div>Poäng: <span id="score">0</span></div>
+            <div>Försök kvar: <span id="lives">3</span></div>
+            <div><span id="remaining">52</span> kort kvar</div>
+        </section>
+
+        <!-- Kortleken -->
+        <section class="table">
+            <div id="card" class="card" aria-live="polite">
+                <!-- HÄR ÄR KORTEN MED js! -->
+            </div>
+            <div id="message" class="message" aria-live="polite"></div>
+        </section>
+
+        <!-- Kontrollknappar -->
+        <section class="controls">
+            <button id="btn-lower"  data-choice="lower">Nästa kort är lägre</button>
+            <button id="btn-equal"  data-choice="equal">Nästa kort är likvärdigt</button>
+            <button id="btn-higher" data-choice="higher">Nästa kort är högre</button>
+        </section>
+    </main>
+</body>
+</html>
