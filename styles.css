@@ -58,7 +58,6 @@ html, body {
   font-size: 200px;
   line-height: 1;
 }
-/* små rankmarkeringar uppe/vänster och nere/höger om du vill lägga in dem i JS */
 .card .rank.tl, .card .rank.br {
   position: absolute;
   font-size: 20px;
@@ -67,7 +66,7 @@ html, body {
 .card .rank.tl { top: 10px; left: 12px; }
 .card .rank.br { bottom: 10px; right: 12px; }
 
-.red { color: var(--accent); }   /* röd för ♥ ♦ */
+.red { color: var(--accent); } /* röd för ♥ ♦ */
 .black { color: var(--ink); } /* svart för ♣ ♠ */
 
 .message {

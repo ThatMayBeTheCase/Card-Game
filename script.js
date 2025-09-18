@@ -21,7 +21,7 @@ function rankLabel(rank) {
   if (rank === 12) return "Q";
   if (rank === 13) return "K";
   if (rank === 14) return "A";
-  return String(rank); // 2–10 visas som sina siffror
+  return String(rank);
 }
 
 function renderCardHTML(card) {
@@ -35,7 +35,7 @@ function renderCardHTML(card) {
 }
 
 
-// Blanda kortleken (Fisher–Yates shuffle)
+// Blandar kortleken
 function shuffleDeck(deck) {
     for (let i = deck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -43,7 +43,7 @@ function shuffleDeck(deck) {
     }
 }
 
-// Dra ett kort från toppen av leken
+// Drar ett kort från toppen av leken
 function drawCard() {
   if (deck.length === 0) return null;
   return deck.pop();
@@ -56,7 +56,7 @@ function compareRanks(a, b) {
   return "equal";
 }
 
-// ======== Spel-loop ========
+// Spel-loopen börjar
 
 // Starta spelet
 function startGame() {
@@ -68,17 +68,17 @@ function startGame() {
   updateUI();
 }
 
-// Hantera gissning från knapp (lower/equal/higher)
+// Hanterar gissning från knapptryck
 function handleGuess(choice) {
   if (deck.length === 0) {
     endGame("Korten är slut!")
     return;
   }
-//dra nästa kort
+//drar nästa kort
   const nextCard = drawCard();
   const result = compareRanks(currentCard, nextCard);
 
-//kolla gisningen
+//kollar gisningen
   if (choice === result) {
     score++;
     updateUI("Rätt!");
@@ -88,7 +88,7 @@ function handleGuess(choice) {
     updateUI("Fel!");
   }
 
-//Flytta fram nästa kort i kön
+//Flyttar fram nästa kort i kön
   currentCard = nextCard;
 
   if (lives <= 0) {
@@ -99,22 +99,23 @@ function handleGuess(choice) {
   }
 }
 
-// ======== UI ========
+// UI 
 
-// Uppdatera allt på skärmen
+// Uppdatera allt på skärmen (stats, poäng, försök kvar etc)
 function updateUI(message = "") {
     
-  // score
+  // uppdaterar din score
   document.getElementById("score").textContent = score;
-  // lives
+  // håller koll på dina lives kvar
   document.getElementById("lives").textContent = lives;
-  // remaining
+  // håller koll på remaining kort
   document.getElementById("remaining").textContent = deck.length;
 
-  // current card
+  // current card / nuvarande kort
   const cardDiv = document.getElementById("card");
 cardDiv.classList.remove("red", "black");
 
+// Bestämmer om kortet ska vara rött eller svart
 if (currentCard) {
   const isRed = currentCard.suit === "♥" || currentCard.suit === "♦";
   cardDiv.classList.add(isRed ? "red" : "black");
@@ -130,13 +131,13 @@ else {
 // Avsluta spelet
 function endGame(reason) {
   updateUI(reason + " - Slutpoäng: " + score);
-  // göm knapparna
+  // disable choice knapparna
   document.querySelectorAll(".controls button").forEach(btn => btn.disabled = true);
-  // visa restart-knappen
+  // visar restart-knappen
   document.getElementById("btn-restart").hidden = false;
 }
 
-// Knappar för gissningar
+// Knappar för gissningar (registrerar knapptryck till handleGuess)
 document.querySelectorAll(".controls button").forEach(btn => {
   btn.addEventListener("click", () => {
     handleGuess(btn.dataset.choice);
@@ -145,11 +146,11 @@ document.querySelectorAll(".controls button").forEach(btn => {
 
 // Restart-knapp
 document.getElementById("btn-restart").addEventListener("click", () => {
-  // återställ
+  // återställ knapparna
   document.getElementById("btn-restart").hidden = true;
   document.querySelectorAll(".controls button").forEach(btn => btn.disabled = false);
   startGame();
 });
 
-// ======== Init ========
+//  Init spelet
 startGame();
