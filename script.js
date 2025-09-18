@@ -3,7 +3,7 @@
 let deck = [];
 let currentCard = null; 
 let score = 0;
-let lives = 3;
+let lives = 7;
 
 // skapar en kortlek med 52 kort
 function buildDeck() {
@@ -63,7 +63,7 @@ function startGame() {
   deck = buildDeck();
   shuffleDeck(deck);
   score = 0;
-  lives = 3;
+  lives = 7;
   currentCard = drawCard();
   updateUI();
 }
@@ -78,6 +78,9 @@ function handleGuess(choice) {
   const nextCard = drawCard();
   const result = compareRanks(currentCard, nextCard);
 
+//Flyttar fram nästa kort i kön
+  currentCard = nextCard;
+
 //kollar gisningen
   if (choice === result) {
     score++;
@@ -87,9 +90,6 @@ function handleGuess(choice) {
     lives--;
     updateUI("Fel!");
   }
-
-//Flyttar fram nästa kort i kön
-  currentCard = nextCard;
 
   if (lives <= 0) {
     endGame("Slut på försök!");
